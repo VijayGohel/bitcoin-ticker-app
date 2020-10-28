@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'coin_data.dart';
+import 'dart:io' show Platform;
 
 class PriceScreen extends StatefulWidget {
   @override
@@ -10,7 +11,7 @@ class PriceScreen extends StatefulWidget {
 class _PriceScreenState extends State<PriceScreen> {
   String currentCur = currenciesList[0];
 
-  List<DropdownMenuItem<String>> getDropDwonItem() {
+  DropdownButton androidDropDowm() {
     List<DropdownMenuItem<String>> listCurrency = [];
     for (String currency in currenciesList) {
       var cur = DropdownMenuItem<String>(
@@ -20,16 +21,31 @@ class _PriceScreenState extends State<PriceScreen> {
 
       listCurrency.add(cur);
     }
-    return listCurrency;
+
+    return DropdownButton<String>(
+      value: currentCur,
+      items: listCurrency,
+      onChanged: (value) {
+        setState(() {
+          currentCur = value;
+        });
+      },
+    );
   }
 
-  List<Text> getPickerItems() {
+  CupertinoPicker iosPicker() {
     List<Text> list = [];
     for (String cur in currenciesList) {
       list.add(Text(cur));
     }
 
-    return list;
+    return CupertinoPicker(
+      itemExtent: 30,
+      onSelectedItemChanged: (SelectedIndex) {
+        print(SelectedIndex);
+      },
+      children: list,
+    );
   }
 
   @override
@@ -68,26 +84,10 @@ class _PriceScreenState extends State<PriceScreen> {
             alignment: Alignment.center,
             padding: EdgeInsets.only(bottom: 30.0),
             color: Colors.lightBlue,
-            child: CupertinoPicker(
-              itemExtent: 30,
-              onSelectedItemChanged: (SelectedIndex) {
-                print(SelectedIndex);
-              },
-              children: getPickerItems(),
-            ),
+            child: Platform.isIOS ? iosPicker() : androidDropDowm(),
           ),
         ],
       ),
     );
   }
 }
-
-// DropdownButton<String>(
-//               value: currentCur,
-//               items: getDropDwonItem(),
-//               onChanged: (value) {
-//                 setState(() {
-//                   currentCur = value;
-//                 });
-//               },
-//             ),
