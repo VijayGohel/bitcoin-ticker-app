@@ -1,7 +1,10 @@
+import 'dart:ffi';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'coin_data.dart';
 import 'dart:io' show Platform;
+import 'exchange_rates.dart';
 
 class PriceScreen extends StatefulWidget {
   @override
@@ -10,6 +13,8 @@ class PriceScreen extends StatefulWidget {
 
 class _PriceScreenState extends State<PriceScreen> {
   String currentCur = currenciesList[0];
+
+  int cryptoRate;
 
   DropdownButton androidDropDowm() {
     List<DropdownMenuItem<String>> listCurrency = [];
@@ -48,6 +53,24 @@ class _PriceScreenState extends State<PriceScreen> {
     );
   }
 
+  void decodeExchangeRates(String crypto, String currency) async {
+    ExchangeRates exchangeRates = ExchangeRates();
+    var exchangeRatesData =
+        await exchangeRates.getExchangeRates(crypto, currency);
+    double cryptoRateDouble = exchangeRatesData['rate'];
+    cryptoRate = cryptoRateDouble.toInt();
+
+    print('in decodeExchange');
+    print(cryptoRate);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    print('in initstate');
+    decodeExchangeRates('BTC', 'USD');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,7 +92,7 @@ class _PriceScreenState extends State<PriceScreen> {
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
                 child: Text(
-                  '1 BTC = ? USD',
+                  '1 BTC = $cryptoRate USD',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 20.0,
