@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'coin_data.dart';
@@ -11,8 +13,7 @@ class PriceScreen extends StatefulWidget {
 
 class _PriceScreenState extends State<PriceScreen> {
   String currentCur = currenciesList[0];
-  String currency4printing;
-  int cryptoRate;
+  String cryptoRate = '?';
 
   DropdownButton androidDropDowm() {
     List<DropdownMenuItem<String>> listCurrency = [];
@@ -55,22 +56,30 @@ class _PriceScreenState extends State<PriceScreen> {
 
   void decodeExchangeRates(String crypto, String currency) async {
     ExchangeRates exchangeRates = ExchangeRates();
+
+    cryptoRate = '?';
+
     var exchangeRatesData =
         await exchangeRates.getExchangeRates(crypto, currency);
-    double cryptoRateDouble = exchangeRatesData['rate'];
-    cryptoRate = cryptoRateDouble.toInt();
 
-    currency4printing = exchangeRates.cur;
+    double cryptoRateDouble;
+    setState(() {
+      cryptoRateDouble = exchangeRatesData['rate'];
+      cryptoRate = cryptoRateDouble.toStringAsFixed(0);
+    });
+
     print('in decodeExchange');
-    print('$cryptoRate $currency4printing');
+    print('$cryptoRate $currentCur');
+    print(cryptoRateDouble.toString());
   }
 
   @override
   void initState() {
     super.initState();
     print('in initstate');
+
     setState(() {
-      decodeExchangeRates('BTC', 'USD');
+      decodeExchangeRates('BTC', 'AUD');
     });
   }
 
@@ -95,7 +104,7 @@ class _PriceScreenState extends State<PriceScreen> {
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
                 child: Text(
-                  '1 BTC = $cryptoRate $currency4printing',
+                  '1 BTC = $cryptoRate $currentCur',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 20.0,
