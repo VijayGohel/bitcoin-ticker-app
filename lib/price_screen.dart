@@ -11,7 +11,9 @@ class PriceScreen extends StatefulWidget {
 
 class _PriceScreenState extends State<PriceScreen> {
   String currentCur = currenciesList[0];
-  String cryptoRate = '?';
+  String cryptoRateBTC = '?';
+  String cryptoRateETH = '?';
+  String cryptoRateLTC = '?';
 
   DropdownButton androidDropDowm() {
     List<DropdownMenuItem<String>> listCurrency = [];
@@ -31,6 +33,8 @@ class _PriceScreenState extends State<PriceScreen> {
         setState(() {
           currentCur = value;
           decodeExchangeRates('BTC', value);
+          decodeExchangeRates('ETH', value);
+          decodeExchangeRates('LTC', value);
         });
       },
     );
@@ -55,20 +59,40 @@ class _PriceScreenState extends State<PriceScreen> {
   void decodeExchangeRates(String crypto, String currency) async {
     ExchangeRates exchangeRates = ExchangeRates();
 
-    cryptoRate = '?';
+    cryptoRateBTC = '?';
+    cryptoRateETH = '?';
+    cryptoRateLTC = '?';
 
-    var exchangeRatesData =
-        await exchangeRates.getExchangeRates(crypto, currency);
+    if (crypto == 'BTC') {
+      var exchangeRatesData =
+          await exchangeRates.getExchangeRates(crypto, currency);
 
-    double cryptoRateDouble;
-    setState(() {
-      cryptoRateDouble = exchangeRatesData['rate'];
-      cryptoRate = cryptoRateDouble.toStringAsFixed(0);
-    });
+      double cryptoRateDouble;
+      setState(() {
+        cryptoRateDouble = exchangeRatesData['rate'];
+        cryptoRateBTC = cryptoRateDouble.toStringAsFixed(0);
+      });
+    } else if (crypto == 'ETH') {
+      var exchangeRatesData =
+          await exchangeRates.getExchangeRates(crypto, currency);
 
+      double cryptoRateDouble;
+      setState(() {
+        cryptoRateDouble = exchangeRatesData['rate'];
+        cryptoRateETH = cryptoRateDouble.toStringAsFixed(0);
+      });
+    } else {
+      var exchangeRatesData =
+          await exchangeRates.getExchangeRates(crypto, currency);
+
+      double cryptoRateDouble;
+      setState(() {
+        cryptoRateDouble = exchangeRatesData['rate'];
+        cryptoRateLTC = cryptoRateDouble.toStringAsFixed(0);
+      });
+    }
     print('in decodeExchange');
-    print('$cryptoRate $currentCur');
-    print(cryptoRateDouble.toString());
+    print('$cryptoRateBTC $currentCur $cryptoRateETH $cryptoRateLTC');
   }
 
   @override
@@ -78,6 +102,8 @@ class _PriceScreenState extends State<PriceScreen> {
 
     setState(() {
       decodeExchangeRates('BTC', 'AUD');
+      decodeExchangeRates('ETH', 'AUD');
+      decodeExchangeRates('LTC', 'AUD');
     });
   }
 
@@ -91,26 +117,75 @@ class _PriceScreenState extends State<PriceScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Padding(
-            padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
-            child: Card(
-              color: Colors.lightBlueAccent,
-              elevation: 5.0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
-                child: Text(
-                  '1 BTC = $cryptoRate $currentCur',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.white,
+          Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
+                child: Card(
+                  color: Colors.lightBlueAccent,
+                  elevation: 5.0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: Padding(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
+                    child: Text(
+                      '1 BTC = $cryptoRateBTC $currentCur',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
+                child: Card(
+                  color: Colors.lightBlueAccent,
+                  elevation: 5.0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: Padding(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
+                    child: Text(
+                      '1 ETH = $cryptoRateETH $currentCur',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
+                child: Card(
+                  color: Colors.lightBlueAccent,
+                  elevation: 5.0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: Padding(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
+                    child: Text(
+                      '1 LTC = $cryptoRateLTC $currentCur',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
           Container(
             height: 150.0,
